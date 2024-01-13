@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedFiles", "SharedFiles", "{0AC3B633-2E31-438B-9411-9EAAEA7B3882}"
+	ProjectSection(SolutionItems) = preProject
+		SharedFiles\DapperContext.cs = SharedFiles\DapperContext.cs
+		SharedFiles\DapperTransient.cs = SharedFiles\DapperTransient.cs
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Listings", "Listings\Listings.csproj", "{829DA075-9C13-4817-BB66-1D23FB463B19}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighbourhoodGeoJsonLoader", "NeighbourhoodGeoJsonLoader\NeighbourhoodGeoJsonLoader.csproj", "{AC37B8E2-5C3A-4339-9A3F-73B58370C524}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{57E3E5BB-C7D4-4409-A6F7-A19E9A128C80}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{829DA075-9C13-4817-BB66-1D23FB463B19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{829DA075-9C13-4817-BB66-1D23FB463B19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{829DA075-9C13-4817-BB66-1D23FB463B19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{829DA075-9C13-4817-BB66-1D23FB463B19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AC37B8E2-5C3A-4339-9A3F-73B58370C524} = {57E3E5BB-C7D4-4409-A6F7-A19E9A128C80}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EF316E1C-0F64-4198-9F05-990ED2A28605}
+	EndGlobalSection
+EndGlobal
