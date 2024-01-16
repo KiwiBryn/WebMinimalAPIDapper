@@ -302,8 +302,6 @@ app.MapGet("/Listing/Search/AdoAsync", async ([AsParameters] SearchParameters se
                   Name = dbDataReader.GetString(nameColumn),
                   ListingURL = dbDataReader.GetString(listingUrlColumn),
                });
-
-               //yield return rowParser(reader); // Need a non lambda version so can use yield
             }
 
             return listings;
@@ -315,7 +313,60 @@ app.MapGet("/Listing/Search/AdoAsync", async ([AsParameters] SearchParameters se
 .Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
 .WithOpenApi();
 
+app.MapGet("/Listing/Search/AdoAsyncYield", AdoAsyncYield);
+
 app.Run();
+
+
+static async IAsyncEnumerable<Model.ListingListDto> AdoAsyncYield([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dappperContext)
+{
+   using (DbConnection connection = (DbConnection)dappperContext.ConnectionCreate())
+   {
+      await connection.OpenAsync();
+
+      using (DbCommand command = connection.CreateCommand())
+      {
+         command.CommandText = SearchPaginatedIdSql;
+
+         var searchTextParameter = command.CreateParameter();
+         searchTextParameter.ParameterName = "SearchText";
+         searchTextParameter.Value = searchParameters.q;
+         searchTextParameter.DbType = DbType.String;
+         command.Parameters.Add(searchTextParameter);
+
+         var pageNumberParameter = command.CreateParameter();
+         pageNumberParameter.ParameterName = "PageNumber";
+         pageNumberParameter.Value = searchParameters.PageNumber;
+         pageNumberParameter.DbType = DbType.Byte;
+         command.Parameters.Add(pageNumberParameter);
+
+         var pageSizeParameter = command.CreateParameter();
+         pageSizeParameter.ParameterName = "PageSize";
+         pageSizeParameter.Value = searchParameters.PageSize;
+         pageSizeParameter.DbType = DbType.Byte;
+         command.Parameters.Add(pageSizeParameter);
+
+         using (var dbDataReader = await command.ExecuteReaderAsync())
+         {
+            List<Model.ListingListDto> listings = new List<Model.ListingListDto>();
+
+            int idColumn = dbDataReader.GetOrdinal("Id");
+            int nameColumn = dbDataReader.GetOrdinal("Name");
+            int listingUrlColumn = dbDataReader.GetOrdinal("ListingURL");
+
+            while (await dbDataReader.ReadAsync())
+            {
+               yield return new Model.ListingListDto
+               {
+                  Id = (ulong)dbDataReader.GetInt64(idColumn),
+                  Name = dbDataReader.GetString(nameColumn),
+                  ListingURL = dbDataReader.GetString(listingUrlColumn),
+               };
+            }
+         }
+      }
+   }
+}
 
 
 public record Constants
