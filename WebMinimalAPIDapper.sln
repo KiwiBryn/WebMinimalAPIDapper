@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighbourhoodGeoJsonLoader"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{57E3E5BB-C7D4-4409-A6F7-A19E9A128C80}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spatial", "Spatial\Spatial.csproj", "{5E262DC4-7513-46CE-B2AB-923858CA75A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC37B8E2-5C3A-4339-9A3F-73B58370C524}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

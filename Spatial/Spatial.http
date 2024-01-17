@@ -1,0 +1,6 @@
+@Spatial_HostAddress = http://localhost:5096
+
+GET {{Spatial_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
