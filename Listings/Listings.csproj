@@ -7,6 +7,10 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <UserSecretsId>3dad5c03-23b5-4196-9838-4cae9d98657b</UserSecretsId>
     <RootNamespace>devMobile.dotnet.minimalApi</RootNamespace>
+     <RepositoryUrl>https://github.com/KiwiBryn/WebMinimalAPIDapper</RepositoryUrl>
+     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+     <Copyright>devMobile Software Jan 2024 (c)</Copyright>
+     <PackageProjectUrl>https://blog.devmobile.co.nz/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
