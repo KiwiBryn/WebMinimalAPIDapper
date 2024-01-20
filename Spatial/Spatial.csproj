@@ -5,11 +5,25 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>true</InvariantGlobalization>
+    <UserSecretsId>cbb92085-b7af-4522-8d7c-ed3596e94911</UserSecretsId>
+     <RootNamespace>devMobile.dotnet.minimalApi</RootNamespace>
+     <RepositoryUrl>https://github.com/KiwiBryn/WebMinimalAPIDapper</RepositoryUrl>
+     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+     <Copyright>devMobile Software Jan 2024 (c)</Copyright>
+     <PackageProjectUrl>https://blog.devmobile.co.nz/</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\SharedFiles\DapperContext.cs" Link="DapperContext.cs" />
+    <Compile Include="..\SharedFiles\DapperTransient.cs" Link="DapperTransient.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1" />
+    <PackageReference Include="Polly" Version="8.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
   </ItemGroup>
 
 </Project>
