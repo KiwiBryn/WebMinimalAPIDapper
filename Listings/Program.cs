@@ -47,9 +47,9 @@ const string SearchPaginatedIdSql = @"SELECT Id, [Name], Listing_URL AS ListingU
 
 
 // The MapGets start here (including ones that don't work so well
-app.MapGet("/Listing/Search/Sync", (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Search/Sync", (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return connection.QueryWithRetry(SearchPaginatedIdSql, new { searchText = q , pageNumber, pageSize }); // IEnumerable<Dynamic>
    }
@@ -57,9 +57,9 @@ app.MapGet("/Listing/Search/Sync", (string q, int pageNumber, int pageSize, [Fro
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Search/Async", async (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Search/Async", async (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync(SearchPaginatedIdSql, new { searchText = q, pageNumber, pageSize }); // IEnumerable<Dynamic>
    }
@@ -67,9 +67,9 @@ app.MapGet("/Listing/Search/Async", async (string q, int pageNumber, int pageSiz
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Search/Typed", async Task<IEnumerable<Model.ListingListDto>> (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Search/Typed", async Task<IEnumerable<Model.ListingListDto>> (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync<Model.ListingListDto>(SearchPaginatedIdSql, new { searchText = q, pageNumber, pageSize }); // IEnumerable<ListingListDto>
    }
@@ -77,9 +77,9 @@ app.MapGet("/Listing/Search/Typed", async Task<IEnumerable<Model.ListingListDto>
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Search/Produces", async (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Search/Produces", async (string q, int pageNumber, int pageSize, [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync<Model.ListingListDto>(SearchPaginatedIdSql, new { searchText = q, pageNumber, pageSize });
    }
@@ -88,9 +88,9 @@ app.MapGet("/Listing/Search/Produces", async (string q, int pageNumber, int page
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Count", async Task<int> (string q, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Count", async Task<int> (string q, [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.ExecuteScalarWithRetryAsync<int>(SearchCountSql, new { searchText = q});
    }
@@ -98,9 +98,9 @@ app.MapGet("/Listing/Count", async Task<int> (string q, [FromServices] IDapperCo
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Produces/{id:long}", async (long id, IDapperContext dappperContext) =>
+app.MapGet("/Listing/Produces/{id:long}", async (long id, IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       Model.ListingLookupDto result = await connection.QuerySingleOrDefaultWithRetryAsync<Model.ListingLookupDto>(LookupByIdSql, new { id });
       if (result is null)
@@ -116,9 +116,9 @@ app.MapGet("/Listing/Produces/{id:long}", async (long id, IDapperContext dappper
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Results/{id:long}", async Task<Results<Ok<Model.ListingLookupDto>, NotFound>> (long id, IDapperContext dappperContext) =>
+app.MapGet("/Listing/Results/{id:long}", async Task<Results<Ok<Model.ListingLookupDto>, NotFound>> (long id, IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       Model.ListingLookupDto searchResultSet = await connection.QuerySingleOrDefaultWithRetryAsync<Model.ListingLookupDto>(LookupByIdSql, new { id });
       if (searchResultSet is null)
@@ -133,16 +133,16 @@ app.MapGet("/Listing/Results/{id:long}", async Task<Results<Ok<Model.ListingLook
 
 
 app.MapGet("/Listing/Search/ValidatedQuery", async (
-   //[FromQuery,Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMaximumLength"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLegth")]
+   //[FromQuery,Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMaximumLength"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength")]
    [FromQuery, StringLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength SearchTextMaximumLength",MinimumLength=Constants.SearchTextMinimumLength)]
    string q,
    [FromQuery, Range(Constants.PageNumberMinimum, Constants.PageNumberMaximum, ErrorMessage = "PageNumberMinimum PageNumberMaximum")]
    int pageNumber,
    [FromQuery, Range(Constants.PageSizeMinimum, Constants.PageSizeMaximum, ErrorMessage = "PageSizeMinimum PageSizeMaximum")]
    int pageSize,
-   [FromServices] IDapperContext dappperContext) =>
+   [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync<Model.ListingListDto>(SearchPaginatedIdSql, new { searchText = q, pageNumber, pageSize });
    }
@@ -153,11 +153,11 @@ app.MapGet("/Listing/Search/ValidatedQuery", async (
 
 
 app.MapGet("/Listing/Search/AsParameters", async ([AsParameters] SearchParameters searchParameters,
-   [FromServices] IDapperContext dappperContext) =>
+   [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
-      return await connection.QueryWithRetryAsync<Model.ListingListDto>(SearchPaginatedIdSql, new { searchText = searchParameters.q, searchParameters.PageNumber, searchParameters.PageSize });
+      return await connection.QueryWithRetryAsync<Model.ListingListDto>(SearchPaginatedIdSql, new { searchText = searchParameters.Q, searchParameters.PageNumber, searchParameters.PageSize });
    }
 })
 .Produces<IList<Model.ListingListDto>>(StatusCodes.Status200OK)
@@ -166,15 +166,15 @@ app.MapGet("/Listing/Search/AsParameters", async ([AsParameters] SearchParameter
 
 
 app.MapGet("/Listing/Search/DocumentedInCode", async (
-   [FromQuery, Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLegth"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLegth")]
+   [FromQuery, Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLength"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength")]
    string q,
    [Range(Constants.PageNumberMinimum, Constants.PageNumberMaximum, ErrorMessage = "PageNumberMinimum PageNumberMaximum")]
    int pageNumber,
    [Range(Constants.PageSizeMinimum, Constants.PageSizeMaximum, ErrorMessage = "PageSizeMinimum PageSizeMaximum")]
    int pageSize,
-   [FromServices] IDapperContext dappperContext) =>
+   [FromServices] IDapperContext dapperContext) =>
 {
-   using (var connection = dappperContext.ConnectionCreate())
+   using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync<Model.ListingListDto>(SearchPaginatedIdSql, new { searchText = q, pageNumber, pageSize });
    }
@@ -202,9 +202,9 @@ app.MapGet("/Listing/Search/DocumentedInCode", async (
 });
 
 
-app.MapGet("/Listing/Search/AdoSync", ([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Search/AdoSync", ([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dapperContext) =>
 {
-   using (DbConnection connection = (DbConnection)dappperContext.ConnectionCreate())
+   using (DbConnection connection = (DbConnection)dapperContext.ConnectionCreate())
    {
       connection.Open();
 
@@ -214,7 +214,7 @@ app.MapGet("/Listing/Search/AdoSync", ([AsParameters] SearchParameters searchPar
 
          var searchTextParameter = command.CreateParameter();
          searchTextParameter.ParameterName = "SearchText";
-         searchTextParameter.Value = searchParameters.q;
+         searchTextParameter.Value = searchParameters.Q;
          searchTextParameter.DbType = DbType.String;
          command.Parameters.Add(searchTextParameter);
 
@@ -258,9 +258,9 @@ app.MapGet("/Listing/Search/AdoSync", ([AsParameters] SearchParameters searchPar
 .WithOpenApi();
 
 
-app.MapGet("/Listing/Search/AdoAsync", async ([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dappperContext) =>
+app.MapGet("/Listing/Search/AdoAsync", async ([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dapperContext) =>
 {
-   using (DbConnection connection = (DbConnection)dappperContext.ConnectionCreate())
+   using (DbConnection connection = (DbConnection)dapperContext.ConnectionCreate())
    {
       await connection.OpenAsync();
 
@@ -270,7 +270,7 @@ app.MapGet("/Listing/Search/AdoAsync", async ([AsParameters] SearchParameters se
 
          var searchTextParameter = command.CreateParameter();
          searchTextParameter.ParameterName = "SearchText";
-         searchTextParameter.Value = searchParameters.q;
+         searchTextParameter.Value = searchParameters.Q;
          searchTextParameter.DbType = DbType.String;
          command.Parameters.Add(searchTextParameter);
 
@@ -318,9 +318,9 @@ app.MapGet("/Listing/Search/AdoAsyncYield", AdoAsyncYield);
 app.Run();
 
 
-static async IAsyncEnumerable<Model.ListingListDto> AdoAsyncYield([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dappperContext)
+static async IAsyncEnumerable<Model.ListingListDto> AdoAsyncYield([AsParameters] SearchParameters searchParameters, [FromServices] IDapperContext dapperContext)
 {
-   using (DbConnection connection = (DbConnection)dappperContext.ConnectionCreate())
+   using (DbConnection connection = (DbConnection)dapperContext.ConnectionCreate())
    {
       await connection.OpenAsync();
 
@@ -330,7 +330,7 @@ static async IAsyncEnumerable<Model.ListingListDto> AdoAsyncYield([AsParameters]
 
          var searchTextParameter = command.CreateParameter();
          searchTextParameter.ParameterName = "SearchText";
-         searchTextParameter.Value = searchParameters.q;
+         searchTextParameter.Value = searchParameters.Q;
          searchTextParameter.DbType = DbType.String;
          command.Parameters.Add(searchTextParameter);
 
@@ -384,11 +384,11 @@ public record SearchParameters
 {
    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2658 possibly related?
 
-   //[FromQuery, Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLegth"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLegth")]
-   //[Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLegth"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLegth")]
-   //[MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLegth"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLegth")]
+   //[FromQuery, Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLength"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength")]
+   //[Required, MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLength"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength")]
+   //[MinLength(Constants.SearchTextMinimumLength, ErrorMessage = "SearchTextMinimumLength"), MaxLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength")]
    [StringLength(Constants.SearchTextMaximumLength, ErrorMessage = "SearchTextMaximumLength SearchTextMaximumLength", MinimumLength = Constants.SearchTextMinimumLength)]
-   public string q { get; set; }
+   public string Q { get; set; }
 
    //[FromQuery, Range(Constants.PageNumberMinimum, Constants.PageNumberMaximum, ErrorMessage = "PageNumberMinimum PageNumberMaximum")]
    //[Required, Range(Constants.PageNumberMinimum, Constants.PageNumberMaximum, ErrorMessage = "PageNumberMinimum PageNumberMaximum")]
