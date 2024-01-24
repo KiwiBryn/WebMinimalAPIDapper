@@ -31,18 +31,18 @@ area on the left is being treated as the interior of the Polygon, and the area o
 the Polygon.
 
 */
-using System.Text.Json;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.Json;
 
 using Microsoft.SqlServer.Types;
 
 using Dapper;
 
-string jsonString = File.ReadAllText("neighbourhoods.geojson");
+string jsonString = File.ReadAllText("neighbourhoods.GeoJson");
 
 
-using (IDbConnection connection = new SqlConnection("This is not the connection string you are looking for"))
+using (SqlConnection connection = new SqlConnection("This is not the connection string you are looking for"))
 {
    connection.Open();
 
@@ -53,9 +53,9 @@ using (IDbConnection connection = new SqlConnection("This is not the connection 
    {
       string neighbourhood = feature.Properties["neighbourhood"].ToString();
 
-      Console.WriteLine($"Neightbourhood:{neighbourhood}");
+      Console.WriteLine($"Neighbourhood:{neighbourhood}");
 
-      var geometery = (GeoJSON.Text.Geometry.MultiPolygon)feature.Geometry;
+      var geometry = (GeoJSON.Text.Geometry.MultiPolygon)feature.Geometry;
 
       var s = new SqlGeographyBuilder();
 
@@ -64,15 +64,15 @@ using (IDbConnection connection = new SqlConnection("This is not the connection 
       s.BeginGeography(OpenGisGeographyType.MultiPolygon);
       s.BeginGeography(OpenGisGeographyType.Polygon); // A
       
-      Console.WriteLine($"Polygon cordinates:{geometery.Coordinates.Count}");
-      foreach (var coordinates in geometery.Coordinates)
+      Console.WriteLine($"Polygon coordinates:{geometry.Coordinates.Count}");
+      foreach (var coordinates in geometry.Coordinates)
       {
         //s.BeginGeography(OpenGisGeographyType.Polygon); // B
 
-         Console.WriteLine($"Linestring cordinates:{coordinates.Coordinates.Count}");
+         Console.WriteLine($"LineString coordinates:{coordinates.Coordinates.Count}");
          foreach (var c in coordinates.Coordinates)
          {
-            Console.WriteLine($"Point cordinates:{c.Coordinates.Count}");
+            Console.WriteLine($"Point coordinates:{c.Coordinates.Count}");
 
             s.BeginFigure(c.Coordinates[0].Latitude, c.Coordinates[0].Longitude, null, null);
 
