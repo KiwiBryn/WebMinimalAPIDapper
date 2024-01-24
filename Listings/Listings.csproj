@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <UserSecretsId>3dad5c03-23b5-4196-9838-4cae9d98657b</UserSecretsId>
     <RootNamespace>devMobile.dotnet.minimalApi</RootNamespace>
      <RepositoryUrl>https://github.com/KiwiBryn/WebMinimalAPIDapper</RepositoryUrl>
@@ -12,7 +12,7 @@
      <Copyright>devMobile Software Jan 2024 (c)</Copyright>
      <PackageProjectUrl>https://blog.devmobile.co.nz/</PackageProjectUrl>
   </PropertyGroup>
-
+   
   <ItemGroup>
     <Compile Include="..\SharedFiles\DapperContext.cs" Link="DapperContext.cs" />
     <Compile Include="..\SharedFiles\DapperTransient.cs" Link="DapperTransient.cs" />
