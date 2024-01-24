@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>false</InvariantGlobalization>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <UserSecretsId>3dad5c03-23b5-4196-9838-4cae9d98657b</UserSecretsId>
     <RootNamespace>devMobile.dotnet.minimalApi</RootNamespace>
      <RepositoryUrl>https://github.com/KiwiBryn/WebMinimalAPIDapper</RepositoryUrl>
