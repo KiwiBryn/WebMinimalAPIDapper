@@ -1,0 +1,6 @@
+@SpatialNetTopologySuite_HostAddress = http://localhost:5111
+
+GET {{SpatialNetTopologySuite_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
