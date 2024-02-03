@@ -15,7 +15,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NeighbourhoodGeoJsonLoader"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{57E3E5BB-C7D4-4409-A6F7-A19E9A128C80}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spatial", "Spatial\Spatial.csproj", "{5E262DC4-7513-46CE-B2AB-923858CA75A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Spatial", "Spatial\Spatial.csproj", "{5E262DC4-7513-46CE-B2AB-923858CA75A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperSpatial", "DapperSpatial\DapperSpatial.csproj", "{9C0DD4CC-03CE-415D-9532-8A020B6C1F4C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperSpatialGeo", "DapperSpatialGeo\DapperSpatialGeo.csproj", "{23F3592C-36BB-42D1-9E9B-E6921623EE60}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DapperSpatialNetTopologySuite", "DapperSpatialNetTopologySuite\DapperSpatialNetTopologySuite.csproj", "{738F0545-0A63-46DF-A156-44069A85AA86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpatialNetTopologySuite", "SpatialNetTopologySuite\SpatialNetTopologySuite.csproj", "{5938DF96-D323-4DD9-A6F3-5ABE3AF29D3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +43,22 @@ Global
 		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E262DC4-7513-46CE-B2AB-923858CA75A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C0DD4CC-03CE-415D-9532-8A020B6C1F4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C0DD4CC-03CE-415D-9532-8A020B6C1F4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C0DD4CC-03CE-415D-9532-8A020B6C1F4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C0DD4CC-03CE-415D-9532-8A020B6C1F4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23F3592C-36BB-42D1-9E9B-E6921623EE60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F3592C-36BB-42D1-9E9B-E6921623EE60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F3592C-36BB-42D1-9E9B-E6921623EE60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F3592C-36BB-42D1-9E9B-E6921623EE60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{738F0545-0A63-46DF-A156-44069A85AA86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{738F0545-0A63-46DF-A156-44069A85AA86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{738F0545-0A63-46DF-A156-44069A85AA86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{738F0545-0A63-46DF-A156-44069A85AA86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5938DF96-D323-4DD9-A6F3-5ABE3AF29D3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5938DF96-D323-4DD9-A6F3-5ABE3AF29D3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5938DF96-D323-4DD9-A6F3-5ABE3AF29D3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5938DF96-D323-4DD9-A6F3-5ABE3AF29D3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

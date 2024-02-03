@@ -34,13 +34,13 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-const string ListingNeighbourhoodSQL = @"SELECT Id, neighbourhoodUID, name, neighbourhood_url FROM Neighbourhood ORDER BY Name";
+const string ListingNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighbourhood_url FROM Neighbourhood ORDER BY Name";
 
-const string ListingInNeighbourhoodSQL = @"SELECT Id, neighbourhoodUID, name, neighbourhood_url FROM Neighbourhood WHERE Neighbourhood.Boundary.STContains(geography::Point(@Latitude, @Longitude, 4326)) = 1";
+const string ListingInNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighbourhood_url FROM Neighbourhood WHERE Neighbourhood.Boundary.STContains(geography::Point(@Latitude, @Longitude, 4326)) = 1";
 
 const string ListingsNearbySQL = @"DECLARE @Origin AS GEOGRAPHY = geography::Point(@Latitude, @Longitude, 4326); 
                                   DECLARE @Circle AS GEOGRAPHY = @Origin.STBuffer(@distance); 
-                                  SELECT TOP(200) ID, uid as ListingUID, Name, listing_url as ListingUrl, @Origin.STDistance(Listing.Location) as Distance 
+                                  SELECT TOP(50) uid as ListingUID, Name, listing_url as ListingUrl, @Origin.STDistance(Listing.Location) as Distance 
                                   FROM [listing] 
                                   WHERE Listing.Location.STWithin(@Circle) = 1 ORDER BY Distance";
 
@@ -90,7 +90,7 @@ app.MapGet("/Spatial/NearbyText", async (double latitude, double longitude, doub
 
 app.MapGet("/Spatial/NearbyPoint", async (double latitude, double longitude, double distance, [FromServices] IDapperContext dapperContext) =>
 {
-   var location = new Point(longitude, latitude) { SRID = 4326 };
+   var origin = new Point(longitude, latitude) { SRID = 4326 };
    var locationWriter = new SqlServerBytesWriter() { IsGeography = true };
 
    SqlServerBytesReader reader = new SqlServerBytesReader()
@@ -98,7 +98,7 @@ app.MapGet("/Spatial/NearbyPoint", async (double latitude, double longitude, dou
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>("ListingsNearbyGeography", new { location = locationWriter.Write(location), distance }, commandType: CommandType.StoredProcedure);
+      return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>("ListingsNearbyGeography", new { Origin = locationWriter.Write(origin), distance }, commandType: CommandType.StoredProcedure);
    }
 })
 .Produces<IList<Model.ListingNearbyListDto>>(StatusCodes.Status200OK)
@@ -112,7 +112,6 @@ namespace Model
 {
    internal record NeighbourhoodListDto
    {
-      public ulong Id { get; set; }
       public Guid NeighbourhoodUID { get; set; }
       [Required]
       public string? Name { get; set; }
@@ -122,7 +121,6 @@ namespace Model
 
    internal record NeighbourhoodSearchDto
    {
-      public ulong Id { get; set; }
       public Guid NeighbourhoodUID { get; set; }
       [Required]
       public string? Name { get; set; }
@@ -132,7 +130,6 @@ namespace Model
 
    internal record ListingNearbyListDto
    {
-      public ulong Id { get; set; }
       public Guid ListingUID { get;}
       [Required]
       public string? Name { get; set; }
