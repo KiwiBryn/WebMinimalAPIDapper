@@ -11,7 +11,7 @@ using System.Data;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Dapper;
+using devMobile.Azure.DapperTransient;
 
 using devMobile.Dapper;
 
@@ -36,13 +36,14 @@ app.MapGet("/Spatial/NearbyLatitudeLongitude", async (double latitude, double lo
 {
    using (var connection = dapperContext.ConnectionCreate())
    {
-      return await connection.QueryAsync<Model.ListingNearbyListLatitudeLongitudeDto>("ListingsSpatialNearbyLatitudeLongitude", new { latitude, longitude, distance }, commandType: CommandType.StoredProcedure);
+      return await connection.QueryWithRetryAsync<Model.ListingNearbyListLatitudeLongitudeDto>("ListingsSpatialNearbyLatitudeLongitude", new { latitude, longitude, distance }, commandType: CommandType.StoredProcedure);
    }
 })
 .Produces<IList<Model.ListingNearbyListLatitudeLongitudeDto>>(StatusCodes.Status200OK)
 .WithOpenApi();
 
 app.Run();
+
 
 namespace Model
 {
