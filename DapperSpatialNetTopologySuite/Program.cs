@@ -14,18 +14,19 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Text.Json.Serialization;
 
 using Microsoft.AspNetCore.Mvc;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 
-using Dapper;
-
 using devMobile.Dapper;
+using devMobile.Azure.DapperTransient;
 
 //https://stackoverflow.com/questions/58980355/microsoft-sqlserver-types-14-0-to-access-its-geographical-capabitlies
+#if NETTOPOLOGY_SUITE_LOCATION
+   SqlMapper.AddTypeHandler(new PointHandler());
+#endif
 #if NETTOPOLOGY_SUITE_SERIALIZE
    SqlMapper.AddTypeHandler(new PointHandlerSerialise());
 #endif
@@ -65,6 +66,23 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
+app.MapGet("/Spatial/NearbyPoint", async (double latitude, double longitude, double distance, [FromServices] IDapperContext dapperContext) =>
+{
+   var origin = new Point(longitude, latitude) { SRID = 4326 };
+   var locationWriter = new SqlServerBytesWriter() { IsGeography = true };
+
+   SqlServerBytesReader reader = new SqlServerBytesReader()
+   { IsGeography = true };
+
+   using (var connection = dapperContext.ConnectionCreate())
+   {
+      return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>("ListingsNearbyGeography", new { Origin = locationWriter.Write(origin), distance }, commandType: CommandType.StoredProcedure);
+   }
+})
+.Produces<IList<Model.ListingNearbyListDto>>(StatusCodes.Status200OK)
+.WithOpenApi();
+
+
 #if NETTOPOLOGY_SUITE_LOCATION
 app.MapGet("/Spatial/NearbyGeography", async (double latitude, double longitude, int distance, [FromServices] IDapperContext dapperContext) =>
 {
@@ -72,7 +90,7 @@ app.MapGet("/Spatial/NearbyGeography", async (double latitude, double longitude,
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeography", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeography", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -90,7 +108,7 @@ app.MapGet("/Spatial/NearbyGeographySerialize", async (double latitude, double l
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographySerialize", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographySerialize", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -108,7 +126,7 @@ app.MapGet("/Spatial/NearbyGeographyWkb", async (double latitude, double longitu
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographyWkb", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographyWkb", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -126,7 +144,7 @@ app.MapGet("/Spatial/NearbyGeographyWkt", async (double latitude, double longitu
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographyWkt", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographyWkt", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -136,132 +154,6 @@ app.MapGet("/Spatial/NearbyGeographyWkt", async (double latitude, double longitu
 .WithOpenApi();
 #endif
 
-
-app.MapGet("/Listing/Search/Ado", async (double latitude, double longitude, int distance, [FromServices] IDapperContext dapperContext) =>
-{
-   var origin = new Point(longitude, latitude) { SRID = 4326 };
-
-   using (SqlConnection connection = (SqlConnection)dapperContext.ConnectionCreate())
-   {
-      await connection.OpenAsync();
-
-      var geographyWriter = new SqlServerBytesWriter { IsGeography = true };
-
-      using (SqlCommand command = connection.CreateCommand())
-      {
-         command.CommandText = "ListingsSpatialNearbyGeography";
-         command.CommandType = CommandType.StoredProcedure;
-
-         var originParameter = command.CreateParameter();
-         originParameter.ParameterName = "Origin";
-         originParameter.Value = new SqlBytes(geographyWriter.Write(origin));
-         originParameter.SqlDbType = SqlDbType.Udt;
-         originParameter.UdtTypeName = "GEOGRAPHY";
-         command.Parameters.Add(originParameter);
-
-         var distanceParameter = command.CreateParameter();
-         distanceParameter.ParameterName = "Distance";
-         distanceParameter.Value = distance;
-         distanceParameter.DbType = DbType.Int32;
-         command.Parameters.Add(distanceParameter);
-
-         var geographyReader = new SqlServerBytesReader { IsGeography = true };
-
-         using (var dbDataReader = await command.ExecuteReaderAsync())
-         {
-            List<Model.ListingNearbyListGeographyDto> listings = new List<Model.ListingNearbyListGeographyDto>();
-
-            int listingUIDColumn = dbDataReader.GetOrdinal("ListingUID");
-            int nameColumn = dbDataReader.GetOrdinal("Name");
-            int listingUrlColumn = dbDataReader.GetOrdinal("ListingUrl");
-            int distanceColumn = dbDataReader.GetOrdinal("Distance");
-            int LocationColumn = dbDataReader.GetOrdinal("Location");
-
-            while (await dbDataReader.ReadAsync())
-            {
-               listings.Add(new Model.ListingNearbyListGeographyDto
-               {
-                  ListingUID = dbDataReader.GetGuid(listingUIDColumn),
-                  Name = dbDataReader.GetString(nameColumn),
-                  ListingUrl = dbDataReader.GetString(listingUrlColumn),
-                  Distance = dbDataReader.GetDouble(distanceColumn),
-
-                  Location = (Point)geographyReader.Read(dbDataReader.GetSqlBytes(LocationColumn).Value)
-               });
-            }
-
-            return listings;
-         }
-      }
-   }
-})
-.Produces<IList<Model.ListingNearbyListGeographyDto>>(StatusCodes.Status200OK)
-.Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-.WithOpenApi();
-
-
-app.MapGet("/Listing/Search/AdoSerialize", async (double latitude, double longitude, int distance, [FromServices] IDapperContext dapperContext) =>
-{
-   var origin = new Point(longitude, latitude) { SRID = 4326 };
-
-   using (SqlConnection connection = (SqlConnection)dapperContext.ConnectionCreate())
-   {
-      await connection.OpenAsync();
-
-      var geographyWriter = new SqlServerBytesWriter { IsGeography = true };
-
-      using (SqlCommand command = connection.CreateCommand())
-      {
-         command.CommandText = "ListingsSpatialNearbyGeographySerialize";
-         command.CommandType = CommandType.StoredProcedure;
-
-         var originParameter = command.CreateParameter();
-         originParameter.ParameterName = "Origin";
-         originParameter.Value = new SqlBytes(geographyWriter.Write(origin));
-         originParameter.SqlDbType = SqlDbType.Udt;
-         originParameter.UdtTypeName = "GEOGRAPHY";
-         command.Parameters.Add(originParameter);
-
-         var distanceParameter = command.CreateParameter();
-         distanceParameter.ParameterName = "Distance";
-         distanceParameter.Value = distance;
-         distanceParameter.DbType = DbType.Int32;
-         command.Parameters.Add(distanceParameter);
-
-         var geographyReader = new SqlServerBytesReader { IsGeography = true };
-
-         using (var dbDataReader = await command.ExecuteReaderAsync())
-         {
-            List<Model.ListingNearbyListGeographyDto> listings = new List<Model.ListingNearbyListGeographyDto>();
-
-            int listingUIDColumn = dbDataReader.GetOrdinal("ListingUID");
-            int nameColumn = dbDataReader.GetOrdinal("Name");
-            int listingUrlColumn = dbDataReader.GetOrdinal("ListingUrl");
-            int distanceColumn = dbDataReader.GetOrdinal("Distance");
-            int LocationColumn = dbDataReader.GetOrdinal("Location");
-
-            while (await dbDataReader.ReadAsync())
-            {
-               listings.Add(new Model.ListingNearbyListGeographyDto
-               {
-                  ListingUID = dbDataReader.GetGuid(listingUIDColumn),
-                  Name = dbDataReader.GetString(nameColumn),
-                  ListingUrl = dbDataReader.GetString(listingUrlColumn),
-                  Distance = dbDataReader.GetDouble(distanceColumn),
-                  Location = (Point)geographyReader.Read(dbDataReader.GetSqlBytes(LocationColumn).Value)
-               });
-            }
-
-            return listings;
-         }
-      }
-   }
-})
-.Produces<IList<Model.ListingNearbyListGeographyDto>>(StatusCodes.Status200OK)
-.Produces<ProblemDetails>(StatusCodes.Status400BadRequest)
-.WithOpenApi();
-
-
 app.Run();
 
 
@@ -269,6 +161,29 @@ app.Run();
 //  https://github.com/NetTopologySuite/NetTopologySuite.IO.SqlServerBytes
 //  https://blog.marcgravell.com/2014/07/dapper-gets-type-handlers-and-learns.html
 //
+#if NETTOPOLOGY_SUITE_LOCATION
+class PointHandler : SqlMapper.TypeHandler<Point>
+{
+   public override Point Parse(object value)
+   {
+      var reader = new SqlServerBytesReader { IsGeography = true };
+
+      return (Point)reader.Read((byte[])value);
+   }
+
+   public override void SetValue(IDbDataParameter parameter, Point? value)
+   {
+      ((SqlParameter)parameter).SqlDbType = SqlDbType.Udt;  // @Origin parameter?
+      ((SqlParameter)parameter).UdtTypeName = "GEOGRAPHY";
+
+      var geometryWriter = new SqlServerBytesWriter { IsGeography = true };
+
+      parameter.Value = geometryWriter.Write(value);
+   }
+}
+#endif
+
+
 #if NETTOPOLOGY_SUITE_WKB
 class PointHandlerWkb : SqlMapper.TypeHandler<Point>
 {
@@ -292,6 +207,7 @@ class PointHandlerWkb : SqlMapper.TypeHandler<Point>
 }
 #endif
 
+
 #if NETTOPOLOGY_SUITE_WKT
 class PointHandlerWkt : SqlMapper.TypeHandler<Point>
 {
@@ -311,6 +227,7 @@ class PointHandlerWkt : SqlMapper.TypeHandler<Point>
    }
 }
 #endif
+
 
 // Inspired some more by
 //  https://github.com/bricelam
@@ -340,6 +257,17 @@ class PointHandlerSerialise : SqlMapper.TypeHandler<Point>
 
 namespace Model
 {
+   internal record ListingNearbyListDto
+   {
+      public Guid ListingUID { get; }
+      [Required]
+      public string? Name { get; set; }
+      [Required]
+      public string? ListingUrl { get; set; }
+      [Required]
+      public double Distance { get; set; }
+   };
+
    internal record ListingNearbyListGeographyDto
    {
       public Guid ListingUID { get; set; }
