@@ -4,8 +4,6 @@
 // Licensed under the Apache License, Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0
 //
 //---------------------------------------------------------------------------------
-using System.ComponentModel.DataAnnotations;
-
 using Microsoft.AspNetCore.Mvc;
 
 using devMobile.Azure.DapperTransient;
@@ -30,9 +28,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-const string ListingNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighbourhood_url FROM Neighbourhood ORDER BY Name";
+const string ListingNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighbourhood_url as neighbourhoodUrl FROM Neighbourhood ORDER BY Name";
 
-const string ListingInNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighbourhood_url FROM Neighbourhood WHERE Neighbourhood.Boundary.STContains(geography::Point(@Latitude, @Longitude, 4326)) = 1";
+const string ListingInNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighbourhood_url as neighbourhoodUrl FROM Neighbourhood WHERE Neighbourhood.Boundary.STContains(geography::Point(@Latitude, @Longitude, 4326)) = 1";
 
 const string ListingsNearbySQL = @"DECLARE @Origin AS GEOGRAPHY = geography::Point(@Latitude, @Longitude, 4326); 
                                   DECLARE @Circle AS GEOGRAPHY = @Origin.STBuffer(@distance); 
@@ -92,29 +90,22 @@ namespace Model
    internal record NeighbourhoodListDto
    {
       public Guid NeighbourhoodUID { get; set; }
-      [Required]
-      public string? Name { get; set; }
-      [Required]
-      public string? Neighbourhood_url { get; set; }
+      public string Name { get; set; }
+      public string NeighbourhoodUrl { get; set; }
    };
 
    internal record NeighbourhoodSearchDto
    {
       public Guid NeighbourhoodUID { get; set; }
-      [Required]
-      public string? Name { get; set; }
-      [Required]
-      public string? Neighbourhood_url { get; set; }
+      public string Name { get; set; }
+      public string NeighbourhoodUrl { get; set; }
    };
 
    internal record ListingNearbyListDto
    {
       public Guid ListingUID { get;}
-      [Required]
-      public string? Name { get; set; }
-      [Required]
-      public string? ListingUrl { get; set; }
-      [Required]
-      public double Distance { get; set; }
+      public string Name { get; set; }
+      public string ListingUrl { get; set; }
+      public int Distance { get; set; }
    };
 }
