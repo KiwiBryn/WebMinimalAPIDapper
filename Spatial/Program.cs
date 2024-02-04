@@ -5,12 +5,8 @@
 //
 //---------------------------------------------------------------------------------
 using System.ComponentModel.DataAnnotations;
-using System.Data;
 
 using Microsoft.AspNetCore.Mvc;
-
-using NetTopologySuite.IO;
-using NetTopologySuite.Geometries;
 
 using devMobile.Azure.DapperTransient;
 using devMobile.Dapper;
@@ -46,7 +42,7 @@ const string ListingsNearbySQL = @"DECLARE @Origin AS GEOGRAPHY = geography::Poi
 
 
 app.MapGet("/Spatial/Neighbourhoods", async ( [FromServices] IDapperContext dapperContext) =>
-{ 
+{
    using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync<Model.NeighbourhoodListDto>(ListingNeighbourhoodSQL);
@@ -82,23 +78,6 @@ app.MapGet("/Spatial/NearbyText", async (double latitude, double longitude, doub
    using (var connection = dapperContext.ConnectionCreate())
    {
       return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>(ListingsNearbySQL, new { latitude, longitude, distance });
-   }
-})
-.Produces<IList<Model.ListingNearbyListDto>>(StatusCodes.Status200OK)
-.WithOpenApi();
-
-
-app.MapGet("/Spatial/NearbyPoint", async (double latitude, double longitude, double distance, [FromServices] IDapperContext dapperContext) =>
-{
-   var origin = new Point(longitude, latitude) { SRID = 4326 };
-   var locationWriter = new SqlServerBytesWriter() { IsGeography = true };
-
-   SqlServerBytesReader reader = new SqlServerBytesReader()
-   { IsGeography = true };
-
-   using (var connection = dapperContext.ConnectionCreate())
-   {
-      return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>("ListingsNearbyGeography", new { Origin = locationWriter.Write(origin), distance }, commandType: CommandType.StoredProcedure);
    }
 })
 .Produces<IList<Model.ListingNearbyListDto>>(StatusCodes.Status200OK)
