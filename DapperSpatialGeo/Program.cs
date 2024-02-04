@@ -14,8 +14,7 @@ using Geo.IO.Wkb;
 using Geo.IO.Wkt;
 using Geo.Geometries;
 
-using Dapper;
-
+using devMobile.Azure.DapperTransient;
 using devMobile.Dapper;
 
 
@@ -41,7 +40,7 @@ app.MapGet("/Spatial/NearbyWkb", async (double latitude, double longitude, int d
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryAsync<Model.ListingNearbyListWkbDto>("[ListingsSpatialNearbyGeoWkb]", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListWkbDto>("[ListingsSpatialNearbyGeoWkb]", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -56,7 +55,7 @@ app.MapGet("/Spatial/NearbyWkt", async (double latitude, double longitude, int d
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryAsync<Model.ListingNearbyListWktDto>("[ListingsSpatialNearbyGeoWkt]", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListWktDto>("[ListingsSpatialNearbyGeoWkt]", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
