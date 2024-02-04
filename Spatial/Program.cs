@@ -34,7 +34,7 @@ const string ListingInNeighbourhoodSQL = @"SELECT neighbourhoodUID, name, neighb
 
 const string ListingsNearbySQL = @"DECLARE @Origin AS GEOGRAPHY = geography::Point(@Latitude, @Longitude, 4326); 
                                   DECLARE @Circle AS GEOGRAPHY = @Origin.STBuffer(@distance); 
-                                  SELECT TOP(50) uid as ListingUID, Name, listing_url as ListingUrl, @Origin.STDistance(Listing.Location) as Distance 
+                                  SELECT uid as ListingUID, Name, listing_url as ListingUrl, @Origin.STDistance(Listing.Location) as Distance 
                                   FROM [listing] 
                                   WHERE Listing.Location.STWithin(@Circle) = 1 ORDER BY Distance";
 
