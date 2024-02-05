@@ -31,9 +31,6 @@ SqlMapper.AddTypeHandler(new PointHandler());
 #if NETTOPOLOGY_SUITE_SERIALIZE
    SqlMapper.AddTypeHandler(new PointHandlerSerialise());
 #endif
-#if NETTOPOLOGY_SUITE_WKT
-   SqlMapper.AddTypeHandler(new PointHandlerWkt());
-#endif
 #if NETTOPOLOGY_SUITE_WKB
    SqlMapper.AddTypeHandler(new PointHandlerWkb());
 #endif
