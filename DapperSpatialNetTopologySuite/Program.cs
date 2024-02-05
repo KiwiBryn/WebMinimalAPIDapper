@@ -91,7 +91,7 @@ app.MapGet("/Spatial/NearbyGeography", async (double latitude, double longitude,
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyNTSGeography", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyNTSLocation", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
