@@ -73,10 +73,10 @@ namespace Model
    internal record ListingNearbyListWkbDto
    {
       public Guid ListingUID { get; }
-      public string? Name { get; set; }
-      public string? ListingUrl { get; set; }
-      public double Distance { get; set; }
-      private byte[]? Wkb { get; set; }
+      public string Name { get; set; }
+      public string ListingUrl { get; set; }
+      public int Distance { get; set; }
+      private byte[] Wkb { get; set; }
 
       public Point Location => (Point)new WkbReader().Read(Wkb);
    }
@@ -84,10 +84,10 @@ namespace Model
    internal record ListingNearbyListWktDto
    {
       public Guid ListingUID { get; }
-      public string? Name { get; set; }
-      public string? ListingUrl { get; set; }
-      public double Distance { get; set; }
-      private string? Wkt { get; set; }
+      public string Name { get; set; }
+      public string ListingUrl { get; set; }
+      public int Distance { get; set; }
+      private string Wkt { get; set; }
 
       public Point Location => (Point)new WktReader().Read(Wkt);
    }

@@ -260,7 +260,7 @@ namespace Model
       public Guid ListingUID { get; }
       public string Name { get; set; }
       public string ListingUrl { get; set; }
-      public double Distance { get; set; }
+      public int Distance { get; set; }
    };
 
    internal record ListingNearbyListGeographyDto
@@ -268,7 +268,7 @@ namespace Model
       public Guid ListingUID { get; set; }
       public string Name { get; set; }
       public string? ListingUrl { get; set; }
-      public double Distance { get; set; }
+      public int Distance { get; set; }
       public Point Location { get; set; }
    }
 }

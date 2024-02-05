@@ -90,7 +90,7 @@ app.MapGet("/Listing/Search/Ado", async (double latitude, double longitude, int 
                   ListingUID = dbDataReader.GetGuid(listingUIDColumn),
                   Name = dbDataReader.GetString(nameColumn),
                   ListingUrl = dbDataReader.GetString(listingUrlColumn),
-                  Distance = dbDataReader.GetDouble(distanceColumn),
+                  Distance = dbDataReader.GetInt32(distanceColumn),
                   Location = (Point)geographyReader.Read(dbDataReader.GetSqlBytes(LocationColumn).Value)
                });
             }
@@ -152,7 +152,7 @@ app.MapGet("/Listing/Search/AdoSerialize", async (double latitude, double longit
                   ListingUID = dbDataReader.GetGuid(listingUIDColumn),
                   Name = dbDataReader.GetString(nameColumn),
                   ListingUrl = dbDataReader.GetString(listingUrlColumn),
-                  Distance = dbDataReader.GetDouble(distanceColumn),
+                  Distance = dbDataReader.GetInt32(distanceColumn),
                   Location = (Point)geographyReader.Read(dbDataReader.GetSqlBytes(LocationColumn).Value)
                });
             }
@@ -177,7 +177,7 @@ namespace Model
       public Guid ListingUID { get; set; }
       public string? Name { get; set; }
       public string? ListingUrl { get; set; }
-      public double Distance { get; set; }
+      public int Distance { get; set; }
       public Point? Location { get; set; }
    }
 }
