@@ -11,7 +11,6 @@
 //#define NETTOPOLOGY_SUITE_WKB
 //#define NETTOPOLOGY_SUITE_WKT
 
-using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text.Json.Serialization;
@@ -20,12 +19,14 @@ using Microsoft.AspNetCore.Mvc;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.IO;
 
+using Dapper;
+
 using devMobile.Dapper;
 using devMobile.Azure.DapperTransient;
 
 //https://stackoverflow.com/questions/58980355/microsoft-sqlserver-types-14-0-to-access-its-geographical-capabitlies
 #if NETTOPOLOGY_SUITE_LOCATION
-   SqlMapper.AddTypeHandler(new PointHandler());
+SqlMapper.AddTypeHandler(new PointHandler());
 #endif
 #if NETTOPOLOGY_SUITE_SERIALIZE
    SqlMapper.AddTypeHandler(new PointHandlerSerialise());
@@ -76,7 +77,7 @@ app.MapGet("/Spatial/NearbyPoint", async (double latitude, double longitude, dou
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>("ListingsNearbyGeography", new { Origin = locationWriter.Write(origin), distance }, commandType: CommandType.StoredProcedure);
+      return await connection.QueryWithRetryAsync<Model.ListingNearbyListDto>("ListingsSpatialNearbyNTSOrigin", new { Origin = locationWriter.Write(origin), distance }, commandType: CommandType.StoredProcedure);
    }
 })
 .Produces<IList<Model.ListingNearbyListDto>>(StatusCodes.Status200OK)
@@ -90,7 +91,7 @@ app.MapGet("/Spatial/NearbyGeography", async (double latitude, double longitude,
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeography", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyNTSGeography", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -108,7 +109,7 @@ app.MapGet("/Spatial/NearbyGeographySerialize", async (double latitude, double l
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographySerialize", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyNTSSerialize", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -126,7 +127,7 @@ app.MapGet("/Spatial/NearbyGeographyWkb", async (double latitude, double longitu
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographyWkb", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyNTSWkb", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -144,7 +145,7 @@ app.MapGet("/Spatial/NearbyGeographyWkt", async (double latitude, double longitu
 
    using (var connection = dapperContext.ConnectionCreate())
    {
-      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyGeographyWkt", new { origin, distance }, commandType: CommandType.StoredProcedure);
+      var results = await connection.QueryWithRetryAsync<Model.ListingNearbyListGeographyDto>("ListingsSpatialNearbyNTSWkt", new { origin, distance }, commandType: CommandType.StoredProcedure);
 
       return results;
    }
@@ -260,11 +261,8 @@ namespace Model
    internal record ListingNearbyListDto
    {
       public Guid ListingUID { get; }
-      [Required]
       public string? Name { get; set; }
-      [Required]
       public string? ListingUrl { get; set; }
-      [Required]
       public double Distance { get; set; }
    };
 
