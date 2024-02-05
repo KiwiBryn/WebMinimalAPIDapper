@@ -261,17 +261,17 @@ namespace Model
    internal record ListingNearbyListDto
    {
       public Guid ListingUID { get; }
-      public string? Name { get; set; }
-      public string? ListingUrl { get; set; }
+      public string Name { get; set; }
+      public string ListingUrl { get; set; }
       public double Distance { get; set; }
    };
 
    internal record ListingNearbyListGeographyDto
    {
       public Guid ListingUID { get; set; }
-      public string? Name { get; set; }
+      public string Name { get; set; }
       public string? ListingUrl { get; set; }
       public double Distance { get; set; }
-      public Point? Location { get; set; }
+      public Point Location { get; set; }
    }
 }
