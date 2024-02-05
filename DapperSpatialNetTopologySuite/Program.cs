@@ -211,9 +211,9 @@ class PointHandlerWkt : SqlMapper.TypeHandler<Point>
 {
    public override Point Parse(object value)
    {
-      var reader = new SqlServerBytesReader { IsGeography = true };
+      WKTReader wktReader = new WKTReader();
 
-      return (Point)reader.Read((byte[])value);
+      return (Point)wktReader.Read(value.ToString());
    }
 
    public override void SetValue(IDbDataParameter parameter, Point? value)
