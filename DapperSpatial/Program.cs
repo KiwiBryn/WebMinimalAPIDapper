@@ -4,7 +4,6 @@
 // Licensed under the Apache License, Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0
 //
 //---------------------------------------------------------------------------------
-using System.Data;
 using Microsoft.AspNetCore.Mvc;
 
 using devMobile.Azure.DapperTransient;
@@ -38,6 +37,18 @@ const string ListingsNearbySQL = @"DECLARE @Origin AS GEOGRAPHY = geography::Poi
                                   SELECT uid as ListingUID, Name, listing_url as ListingUrl, @Origin.STDistance(Listing.Location) as Distance 
                                   FROM [listing] 
                                   WHERE Listing.Location.STWithin(@Circle) = 1 ORDER BY Distance";
+
+const string ListingsNearbyLatitudeLongitudeSQL = @"DECLARE @Location AS GEOGRAPHY = geography::Point(@Latitude, @longitude,4326)
+                                 DECLARE @Circle AS GEOGRAPHY = @Location.STBuffer(@distance);
+                                 SELECT UID as ListingUID
+	                              ,[Name]
+	                              ,listing_url as ListingUrl
+	                              ,Listing.Location.STDistance(@Location) as Distance
+	                              ,latitude
+                                 ,longitude
+                                 FROM [listing]
+                                 WHERE Listing.Location.STWithin(@Circle) = 1
+                                 ORDER BY Distance";
 
 
 app.MapGet("/Spatial/Neighbourhoods", async ([FromServices] IDapperContext dapperContext) =>
@@ -87,7 +98,7 @@ app.MapGet("/Spatial/NearbyLatitudeLongitude", async (double latitude, double lo
 {
    using (var connection = dapperContext.ConnectionCreate())
    {
-      return await connection.QueryWithRetryAsync<Model.ListingNearbyListLatitudeLongitudeDto>("ListingsSpatialNearbyLatitudeLongitude", new { latitude, longitude, distance }, commandType: CommandType.StoredProcedure);
+      return await connection.QueryWithRetryAsync<Model.ListingNearbyListLatitudeLongitudeDto>(ListingsNearbyLatitudeLongitudeSQL, new { latitude, longitude, distance });
    }
 })
 .Produces<IList<Model.ListingNearbyListLatitudeLongitudeDto>>(StatusCodes.Status200OK)
