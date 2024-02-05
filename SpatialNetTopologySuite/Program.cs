@@ -55,7 +55,7 @@ app.MapGet("/Listing/Search/Ado", async (double latitude, double longitude, int 
 
       using (SqlCommand command = connection.CreateCommand())
       {
-         command.CommandText = "ListingsSpatialNearbyGeography";
+         command.CommandText = "ListingsSpatialNearbyNTSLocation";
          command.CommandType = CommandType.StoredProcedure;
 
          var originParameter = command.CreateParameter();
@@ -90,7 +90,7 @@ app.MapGet("/Listing/Search/Ado", async (double latitude, double longitude, int 
                   ListingUID = dbDataReader.GetGuid(listingUIDColumn),
                   Name = dbDataReader.GetString(nameColumn),
                   ListingUrl = dbDataReader.GetString(listingUrlColumn),
-                  Distance = dbDataReader.GetInt32(distanceColumn),
+                  Distance = (int)dbDataReader.GetDouble(distanceColumn),
                   Location = (Point)geographyReader.Read(dbDataReader.GetSqlBytes(LocationColumn).Value)
                });
             }
@@ -117,7 +117,7 @@ app.MapGet("/Listing/Search/AdoSerialize", async (double latitude, double longit
 
       using (SqlCommand command = connection.CreateCommand())
       {
-         command.CommandText = "ListingsSpatialNearbyGeographySerialize";
+         command.CommandText = "ListingsSpatialNearbyNTSSerialize";
          command.CommandType = CommandType.StoredProcedure;
 
          var originParameter = command.CreateParameter();
@@ -152,7 +152,7 @@ app.MapGet("/Listing/Search/AdoSerialize", async (double latitude, double longit
                   ListingUID = dbDataReader.GetGuid(listingUIDColumn),
                   Name = dbDataReader.GetString(nameColumn),
                   ListingUrl = dbDataReader.GetString(listingUrlColumn),
-                  Distance = dbDataReader.GetInt32(distanceColumn),
+                  Distance = (int)dbDataReader.GetDouble(distanceColumn),
                   Location = (Point)geographyReader.Read(dbDataReader.GetSqlBytes(LocationColumn).Value)
                });
             }
