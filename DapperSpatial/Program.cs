@@ -36,7 +36,8 @@ const string ListingsNearbySQL = @"DECLARE @Origin AS GEOGRAPHY = geography::Poi
                                   DECLARE @Circle AS GEOGRAPHY = @Origin.STBuffer(@distance); 
                                   SELECT uid as ListingUID, Name, listing_url as ListingUrl, @Origin.STDistance(Listing.Location) as Distance 
                                   FROM [listing] 
-                                  WHERE Listing.Location.STWithin(@Circle) = 1 ORDER BY Distance";
+                                  WHERE @Circle.STContains(Listing.Location) = 1 ORDER BY Distance
+                                  --WHERE Listing.Location.STWithin(@Circle) = 1 ORDER BY Distance";
 
 const string ListingsNearbyLatitudeLongitudeSQL = @"DECLARE @Location AS GEOGRAPHY = geography::Point(@Latitude, @longitude,4326)
                                  DECLARE @Circle AS GEOGRAPHY = @Location.STBuffer(@distance);
